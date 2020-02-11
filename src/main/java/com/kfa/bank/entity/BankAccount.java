@@ -1,27 +1,22 @@
 package com.kfa.bank.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
+
 @Table (name="bank_account")
 public class BankAccount {
 
 	@Id
 	@Column(name="ID", nullable=false)
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(name="FULL_NAME", length=128, nullable=false)
 	private String fullName;
-	
-	
+
 	@Column(name="BALANCE", nullable=false)
 	private double balance;
-
 
 	/**
 	 * @return the id
@@ -69,8 +64,8 @@ public class BankAccount {
 	public void setBalance(double balance) {
 		this.balance = balance;
 	}
-	
-	
-	
-	
+
+
+
+
 }

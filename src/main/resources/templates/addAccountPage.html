@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head>
+      <title>Bank</title>
+   </head>
+    
+   <body>      
+      <!-- Include _menu.html -->
+      <th:block th:include="/_menu"></th:block>
+       
+      <h2>Add new Account</h2>
+
+      <div th:if="${errorMessage!=null}"
+           style="color:red;font-style:italic" th:utext="${errorMessage}">..</div>
+       
+      <form th:action="@{/addAccount}" th:object="${addAccountForm}" method="POST">
+         <table>
+           <tr>
+              <td>To Bank Account Id</td>
+              <td><input type="text" th:field="*{accountName}"/></td>
+           </tr>
+            <tr>
+              <td>Amount</td>
+              <td><input type="text" th:field="*{amount}" /></td>
+           </tr>           
+           <tr>
+              <td>&nbsp;</td>
+              <td><input type="submit" value="Create Account"/></td>
+           </tr>       
+         </table>      
+      </form>
+       
+   </body>
+</html>
