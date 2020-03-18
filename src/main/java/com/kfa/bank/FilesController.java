@@ -1,27 +1,24 @@
 package com.kfa.bank;
 
-import com.kfa.bank.dao.CustomFileDao;
-import com.kfa.bank.dao.CustomFolderDao;
-import com.kfa.bank.entity.CustomFolder;
-import com.kfa.bank.exception.CustomFileTransactionException;
-import com.kfa.bank.model.CustomFileInfo;
-import com.kfa.bank.model.CustomFolderInfo;
-import org.hibernate.sql.Insert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.kfa.bank.dao.CustomFileDao;
+import com.kfa.bank.dao.CustomFolderDao;
+import com.kfa.bank.exception.CustomFileTransactionException;
+import com.kfa.bank.model.CustomFileInfo;
 
 @Controller
 public class FilesController {
@@ -50,7 +47,7 @@ public class FilesController {
         //List<File> allFiles = new ArrayList<File>();
         //List<File> allDirs = new ArrayList<File>();
 
-        String PATH_TO_SCAN = "E:\\Music";
+        //String PATH_TO_SCAN = "E:\Music\mp3\Bandes Originales\Bo - American Beauty";
 
         /*
         File dirToScan = new File(PATH_TO_SCAN);
@@ -66,9 +63,14 @@ public class FilesController {
         }
         */
 
-        String folderPath = addBackslash("E:\\Music\\mp3\\Bandes Originales");
+        String folderPath = addBackslash("E:\\Music\\mp3\\Bandes Originales\\Bo - American Beauty");
+        
+        System.out.println(folderPath);
+        
         //CustomFolderInfo folder = customFolderDao.findCustomFolderByFolderpath(folderPath);
         //scanFiles(PATH_TO_SCAN);
+        
+        scanFiles(folderPath);
         //read(allDirs);
         System.out.println("-------------------");
         //read(allFiles);
