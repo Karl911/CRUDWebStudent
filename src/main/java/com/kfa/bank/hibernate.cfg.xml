@@ -12,5 +12,7 @@
         <property name="show_sql">true</property>
         <property name="hbm2ddl.auto">create</property>
         <mapping class="com.kfa.bank.entity.BankAccount"></mapping>
+        <mapping class="com.kfa.bank.entity.CustomFile"></mapping>
+        <mapping class="com.kfa.bank.entity.CustomFolder"></mapping>
     </session-factory>
 </hibernate-configuration>

@@ -21,7 +21,7 @@ public class MainController {
     @Autowired
     private BankAccountDAO bankAccountDAO;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/showAccounts", method = RequestMethod.GET)
     public String showBankAccounts(Model model) {
         List<BankAccountInfo> list = bankAccountDAO.listBankAccountInfo();
 

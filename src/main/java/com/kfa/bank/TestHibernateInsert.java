@@ -13,6 +13,7 @@ public class TestHibernateInsert {
         
         //Add new BankAccount object
         BankAccount account = new BankAccount();
+        account.setId(9L);
         account.setFullName("Franck");
         account.setBalance(6000);
          

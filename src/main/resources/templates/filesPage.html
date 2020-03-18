@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Files</title>
+    <!--
+<style>
+th, td {
+    padding: 2px;
+}
+</style>
+-->
+    <link rel = "stylesheet"
+          type = "text/css"
+          href = "myCss.css" />
+</head>
+ 
+<body>
+    <h2>Files</h2>
+ 
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>Filename</th>
+            <th>Path</th>
+        </tr>
+        <tr th:each="fileInfo : ${listFileInfo}">
+            <td th:utext="${fileInfo.id}">..</td>
+            <td th:utext="${fileInfo.filename}">..</td>
+            <td th:utext="${fileInfo.absolutepath}">..</td>
+        </tr>
+     </table>
+    <br>
+
+</body>
+</html>
