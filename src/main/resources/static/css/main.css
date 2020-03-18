@@ -1,0 +1,81 @@
+@font-face{
+font-family:"Roboto Condensed";
+font-style:normal;
+font-weight:300;
+src:local('Roboto Condensed Light'),
+local('RobotoCondensed-Light'),
+url("../fonts/RobotoCondensed/RobotoCondensed-Light.ttf") 
+format('truetype')}
+
+@font-face{
+font-family:"Roboto Condensed";
+font-style:italic;
+font-weight:300;
+src:local('Roboto Condensed Light Italic'),
+local('RobotoCondensed-LightItalic'),
+url("../fonts/RobotoCondensed/RobotoCondensed-LightItalic.ttf")
+format('truetype')}
+
+
+@font-face{
+font-family:"Roboto Condensed";
+font-style:normal;
+font-weight:400;
+src:local('Roboto Condensed Regular'),
+local('RobotoCondensed-Regular'),
+url("../fonts/RobotoCondensed/RobotoCondensed-Regular.ttf")
+format('truetype')}
+
+
+@font-face{
+font-family:"Roboto Condensed";
+font-style:italic;
+font-weight:400;
+src:local('Roboto Condensed Italic'),
+local('RobotoCondensed-Italic'),
+url("../fonts/RobotoCondensed/RobotoCondensed-Italic.ttf") 
+format('truetype')}
+
+@font-face{
+font-family:"Roboto Condensed";
+font-style:normal;
+font-weight:700;
+src:local('Roboto Condensed Bold'),
+local('RobotoCondensed-Bold'),
+url("../fonts/RobotoCondensed/RobotoCondensed-Bold.ttf")
+format('truetype')}
+
+@font-face{
+font-family:"Roboto Condensed";
+font-style:italic;
+font-weight:700;
+src:local('Roboto Condensed Bold Italic'),
+local('RobotoCondensed-BoldItalic'),
+url("../fonts/RobotoCondensed/RobotoCondensed-BoldItalic.ttf")
+format('truetype')}
+
+
+html,body,div,p,li,ul,form,set,h1,h2,h3,h4,h5,h6{margin:0;padding:0;list-style:none}.none{display:none}.hidden{visibility:hidden}.fl{float:left!important}.fr{float:right!important}.left{text-align:left}.right{text-align:right}.center{text-align:
+center!important}.bold{font-weight:bold}.italic{font-style:italic}.nomargin{margin:0!important}img{border:none}a{outline-style:none}.clear{display:block;clear:both;width:100%;height:0;line-height:0;font-size:0}html,body{height:100%}body{letter-spacing:0;
+background:#fabfab}
+a,a:visited,a:active,a:link{text-decoration:none!important;outline:none}a:hover{text-decoration:none!important}
+
+h1,h2,h3,h4,h5{font-weight:normal}
+h1{font-size:2em;margin:0 0 20px}
+h2{font-size:1.833em;margin:0 0 15px}
+h3{font-size:1.667em;margin:0 0 10px}
+h4{font-size:1.333em;margin:0 0 10px}
+h5{font-size:1.167em;margin:0 0 5px}
+img,a img{border:none}.imgLeft{float:left;margin:2px 10px 10px 0}.imgRight{float:right;margin:2px 0 10px 10px}
+
+body
+{font-family:'Roboto Condensed',sans-serif;
+background-color:#bcd;
+direction:ltr;
+margin:0;min-height:100%;padding:0}
+
+#input,textarea{font:1em Arial,sans-serif}
+a span{cursor:pointer}
+h1,h2,h3,h4,h5{color:#201917}
+table{font-size:18px}
+
