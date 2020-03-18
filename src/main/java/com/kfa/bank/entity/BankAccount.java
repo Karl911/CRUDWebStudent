@@ -8,6 +8,7 @@ import javax.persistence.*;
 public class BankAccount {
 
 	@Id
+	//@ManyToOne(cascade = {CascadeType.ALL},fetch= FetchType.EAGER)
 	@Column(name="ID", nullable=false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
