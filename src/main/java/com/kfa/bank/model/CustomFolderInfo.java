@@ -18,8 +18,9 @@ public class CustomFolderInfo {
    }
 
    // Used in JPA query.
-   public CustomFolderInfo(Long id, String folderName, String folderPath, int size, Date creationDate, Date updateDate) {
+   public CustomFolderInfo(Long id, int idParent, String folderName, String folderPath, int size, Date creationDate, Date updateDate) {
       this.id = id;
+      this.idparent = idParent;
       this.foldername = folderName;
       this.folderpath = folderPath;
       this.size = size;

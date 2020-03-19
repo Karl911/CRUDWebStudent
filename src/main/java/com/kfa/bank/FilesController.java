@@ -6,8 +6,17 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -84,10 +93,59 @@ public class FilesController {
     }
     private void scanFiles(String aPath) throws IOException {
 
-        // insert root folder in base
-        File rootFolder = new File(aPath);
-        //String rootFolderName = rootFolder.getParentFile().getName();
-        saveFolder(rootFolder.getName(), -1, rootFolder.getPath() , 10, null, null);
+    	
+    	List<File> allFiles = new ArrayList<File>();
+        List<File> allDirs = new ArrayList<File>();
+    	// Create all folders first
+    	 File dirToScan = new File(aPath);
+
+    	 //File parentFile = dirToScan.getParentFile();
+    	 File parentFile = dirToScan;
+    	 HashMap<Integer, File> mapFolders = new HashMap<Integer, File>();
+    	 LinkedHashMap<File, File> linkedFolderMap = new LinkedHashMap<>();
+    	 int indexFolder = 1;
+    	 while (parentFile != null) {
+    		 if (parentFile.isDirectory())
+    		 {
+    			 allDirs.add(parentFile);
+    		 }
+    		 File newParentFile = parentFile.getParentFile();
+    		 linkedFolderMap.put(parentFile, newParentFile);
+    		 mapFolders.put(indexFolder, parentFile);
+    		 indexFolder++;
+    		 //parentFile = parentFile.getParentFile();
+    		 parentFile = newParentFile;
+    	 }
+    	 
+    	 
+    	 Map<File, File> sortedMapByValue = sort(linkedFolderMap);
+    	 
+    	 int parentId = -1;
+    	 for (Map.Entry<File, File> entry : sortedMapByValue.entrySet()) {
+    		 File folder = entry.getKey();
+    		 	
+    		 String path = folder.getPath();
+    		 if (null == customFolderDao.findCustomFolderByFolderpath(path))
+    		 {
+    			 int folderId = saveFolder(folder.getName(), parentId, path , 10, null, null);
+    			 parentId = folderId;
+    		 }
+    	 }
+    	 
+    	 /*
+         Map<File, File> sortedMapByValue = linkedFolderMap.entrySet()
+            	 .stream() 
+            	 .filter (x -> x.getValue() != null)
+            	 //.sorted(Map.Entry.comparingByValue())
+            	 //.collect(Collectors.toMap(
+            	 .collect(Collectors.toMap(
+            			 //System.out.println(Map.Entry::getKey);
+            	   Map.Entry::getKey, Map.Entry::getValue,		 
+            	 (e1, e2) -> e1,
+            	 LinkedHashMap::new
+            	 ));
+         */
+        
         DirectoryStream<Path> dirStream = Files.newDirectoryStream(Paths.get(aPath));
         for (Path path : dirStream) {
             //System.out.println(path.getFileName());
@@ -124,14 +182,37 @@ public class FilesController {
         }
     }
 
-    private void saveFolder(String folderName, int idParent, String folderPath, int size, Date creationDate, Date updateDate) {
+    private int saveFolder(String folderName, int idParent, String folderPath, int size, Date creationDate, Date updateDate) {
+    	int folderId = -1;
         try {
             //Insert into myfolders (folderame, idParent, size, creationDate, updateDate) values ('test2', 'txt', 1, '20', 'C:', null, null);
-            customFolderDao.saveFolder(folderName, idParent, folderPath, size, creationDate, updateDate);
+            folderId = customFolderDao.saveFolder(folderName, idParent, folderPath, size, creationDate, updateDate);
         } catch (
                 CustomFileTransactionException e) {
             //model.addAttribute("errorMessage", "Error: " + e.getMessage());
         }
+        return folderId;
     }
+    
+    private static HashMap<File, File> sort(HashMap<File, File> map) {
+        List<?> linkedlist = new LinkedList(map.entrySet());
+        Collections.sort(linkedlist, new Comparator() {
+             public int compare(Object o1, Object o2) {
+            	 if (((Map.Entry) (o1)).getValue() == null || 
+            			 ((Map.Entry) (o2)).getValue() == null)
+            	 {
+            		 return -1;
+            	 }
+                return ((Comparable) ((Map.Entry) (o1)).getValue())
+                   .compareTo(((Map.Entry) (o2)).getValue());
+             }
+        });
+        HashMap sortedHashMap = new LinkedHashMap();
+        for (Iterator it = linkedlist.iterator(); it.hasNext();) {
+               Map.Entry entry = (Map.Entry) it.next();
+               sortedHashMap.put(entry.getKey(), entry.getValue());
+        } 
+        return sortedHashMap;
+   }
 
 }
