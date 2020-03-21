@@ -27,7 +27,6 @@ public class CustomFileDao {
 
 	}
 
-
 	public CustomFile findById(Long id)
 	{
 		return this.entityManager.find(CustomFile.class, id);
@@ -47,7 +46,6 @@ public class CustomFileDao {
 				+ " where f.folderid='"+ folderId+"'"
 				+ " and f.filename = :filename";
 		
-		// TODO : set filename without escaping quotes
 		try {
 			TypedQuery<CustomFile> query = entityManager.createQuery(sql, CustomFile.class);
 			query.setParameter("filename", filename);
@@ -71,10 +69,6 @@ public class CustomFileDao {
 			System.out.println("Warning unusual extension");
 		}
 		
-		if (size < 0)
-		{
-			System.out.println("Error on size");
-		}
 		file.setExtension(extension);
 		file.setFolderId(folderId);
 		file.setSize(size);
@@ -88,33 +82,8 @@ public class CustomFileDao {
 	
     private String escapeQuotes (String aString)   {
     	
-    	//String newstring = aString.replaceAll("'","\\\'");
-    	
     	String escapedString = aString.replaceAll("%","\"");
-        //return aString.replace("'","\'");
     	return escapedString;
     }
-
-
-
-	/*
-	@Transactional(propagation = Propagation.REQUIRES_NEW,
-			rollbackFor = CustomFileTransactionException.class)
-	public void saveFolder(String folderName, int idParent, String folderpath, int size, Date creationDate, Date updateDate) throws CustomFileTransactionException {
-
-		CustomFolder folder = new CustomFolder();
-
-		folder.setFoldername(folderName);
-		folder.setIdparent(idParent);
-		folder.setFolderpath(folderpath);
-		folder.setSize(size);
-		folder.setCreationdate(null);
-		folder.setUpdatedate(null);
-		this.entityManager.persist(folder);
-		//this.entityManager.flush();
-
-	}
-	*/
-
 }
 
