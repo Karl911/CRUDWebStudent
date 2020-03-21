@@ -1,6 +1,10 @@
 package com.kfa.bank.model;
 
+import java.text.DecimalFormat;
 import java.util.Date;
+
+import com.kfa.bank.utils.EnumUnit;
+import com.kfa.bank.utils.SizeUnit;
 
 public class CustomFileInfo {
 
@@ -9,7 +13,8 @@ public class CustomFileInfo {
    private String filename;
    private String extension;
    private int folderid;
-   private int size;
+   private long fileSize;
+   private SizeUnit sizeUnit;
    private String absolutepath;
    private Date creationdate;
    private Date updatedate;
@@ -19,12 +24,13 @@ public class CustomFileInfo {
    }
 
    // Used in JPA query.
-   public CustomFileInfo(Long id, String filename, String extension, int folderId, int size, String absolutePath, Date creationDate, Date updateDate) {
+   public CustomFileInfo(Long id, String filename, String extension, int folderId, long fileSize, String absolutePath, Date creationDate, Date updateDate) {
       this.id = id;
       this.filename = filename;
       this.extension = extension;
       this.folderid = folderId;
-      this.size = size;
+      this.fileSize = fileSize;
+      this.sizeUnit = getSizeUnit(fileSize);
       this.absolutepath = absolutePath;
       this.creationdate = creationDate;
       this.updatedate = updateDate;
@@ -63,25 +69,35 @@ public class CustomFileInfo {
    }
 
    public String getAbsolutepath() {
-      return absolutepath;
+	   return absolutepath;
    }
 
-   public void setAbsolutepath(String absolutePath){ this.absolutepath = absolutePath; }
-
-   public int getSize() {
-      return size;
+   public void setAbsolutepath(String absolutePath) { 
+	   this.absolutepath = absolutePath;
    }
 
-   public void setSize(int size) {
-      this.size = size;
+   public long getFileSize() {
+	   return fileSize;
+   }	
+
+   public void setFileSize(int fileSize) {
+	   this.fileSize = fileSize;
+   }
+
+   public SizeUnit getSizeUnit() {
+	   return sizeUnit;
+   }
+
+   public void setSizeUnit(SizeUnit sizeUnit) {
+	   this.sizeUnit = sizeUnit;
    }
 
    public Date getCreationdate() {
-      return creationdate;
+	   return creationdate;
    }
 
    public void setCreationdate(Date creationDate) {
-      this.creationdate = creationDate;
+	   this.creationdate = creationDate;
    }
 
    public Date getUpdatedate() {
@@ -91,6 +107,32 @@ public class CustomFileInfo {
    public void setUpdatedate(Date updateDate) {
       this.updatedate = updateDate;
    }
- 
+   
+	public SizeUnit getSizeUnit(long fileSize){
+		EnumUnit unit = EnumUnit.o;
+		
+		double ret = fileSize;
+		int multiK = 0;
+		while (ret > 1024) {
+			ret /= 1024; 
+			multiK ++;
+		}
+		switch (multiK) {
+		case 1 : unit  = EnumUnit.Ko;
+			break;
+		case 2 : unit  = EnumUnit.Mo;
+			break;
+		case 3 : unit  = EnumUnit.Go;
+			break;
+		default:
+			break;
+		}
+		DecimalFormat f = new DecimalFormat();
+		f.setMaximumFractionDigits(1);
+
+		String size = f.format(ret);
+		SizeUnit sizeUnit = new SizeUnit(size, unit);
+		return sizeUnit;
+	}
 
 }

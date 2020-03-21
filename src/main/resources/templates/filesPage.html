@@ -15,15 +15,23 @@ th, td {
 <body>
     <h2>Files</h2>
  
-    <table border="1" width="1200px">
+    <table border="1" width="100%">
         <tr>
             <th>id</th>
+            <th>FolderId</th>
             <th>Filename</th>
+            <th>Extension</th>
+            <th>Size</th>
+            <th>Unit</th>
             <th>Path</th>
         </tr>
         <tr th:each="fileInfo : ${listFileInfo}">
             <td th:utext="${fileInfo.id}">..</td>
+            <td th:utext="${fileInfo.folderid}">..</td>
             <td th:utext="${fileInfo.filename}">..</td>
+            <td th:utext="${fileInfo.extension}">..</td>
+            <td th:utext="${fileInfo.getSizeUnit().getSize()}">..</td>
+            <td th:utext="${fileInfo.sizeUnit.unit}">..</td>
             <td th:utext="${fileInfo.absolutepath}">..</td>
         </tr>
      </table>

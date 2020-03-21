@@ -1,7 +1,6 @@
 package com.kfa.bank;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.kfa.bank.dao.CustomFileDao;
 import com.kfa.bank.dao.CustomFolderDao;
+import com.kfa.bank.entity.CustomFile;
+import com.kfa.bank.entity.CustomFolder;
 import com.kfa.bank.exception.CustomFileTransactionException;
 import com.kfa.bank.model.CustomFileInfo;
 
@@ -39,10 +39,10 @@ public class FilesController {
     private CustomFolderDao customFolderDao;
 
     @RequestMapping(value = "/showFiles", method = RequestMethod.GET)
-    public String scanDisk(Model model) throws IOException {
+    public String scanDisk(Model model) throws Exception {
 
         // 1- First scanDisk
-        scanDisk();
+        //scanDisk();
 
         // 2 - Display files
         List<CustomFileInfo> list = customFileDao.getFiles();
@@ -52,7 +52,7 @@ public class FilesController {
         return "filesPage";
     }
 
-    private void scanDisk() throws IOException {
+    private void scanDisk() throws Exception {
         //List<File> allFiles = new ArrayList<File>();
         //List<File> allDirs = new ArrayList<File>();
 
@@ -72,7 +72,11 @@ public class FilesController {
         }
         */
 
-        String folderPath = addBackslash("E:\\Music\\mp3\\Bandes Originales\\Bo - American Beauty");
+    	String folderPath = addBackslash("G:\\XXX");
+    	//String folderPath = addBackslash("E:\\Music");
+    	//String folderPath = addBackslash("E:\\Music\\mp3");
+    	//String folderPath = addBackslash("E:\\Music\\mp3\\Bandes Originales");
+        //String folderPath = addBackslash("E:\\Music\\mp3\\Bandes Originales\\Bo - American Beauty");
         
         System.out.println(folderPath);
         
@@ -91,7 +95,7 @@ public class FilesController {
     private String addBackslash (String aString)   {
         return aString.replace("\\","\\\\");
     }
-    private void scanFiles(String aPath) throws IOException {
+    private void scanFiles(String aPath) throws Exception {
 
     	
     	List<File> allFiles = new ArrayList<File>();
@@ -105,6 +109,7 @@ public class FilesController {
     	 LinkedHashMap<File, File> linkedFolderMap = new LinkedHashMap<>();
     	 int indexFolder = 1;
     	 while (parentFile != null) {
+    		 
     		 if (parentFile.isDirectory())
     		 {
     			 allDirs.add(parentFile);
@@ -117,7 +122,6 @@ public class FilesController {
     		 parentFile = newParentFile;
     	 }
     	 
-    	 
     	 Map<File, File> sortedMapByValue = sort(linkedFolderMap);
     	 
     	 int parentId = -1;
@@ -125,10 +129,15 @@ public class FilesController {
     		 File folder = entry.getKey();
     		 	
     		 String path = folder.getPath();
-    		 if (null == customFolderDao.findCustomFolderByFolderpath(path))
+    		 
+    		 CustomFolder customFolder = customFolderDao.findCustomFolderByFolderpath(path);
+    		 if (null == customFolder)
     		 {
     			 int folderId = saveFolder(folder.getName(), parentId, path , 10, null, null);
     			 parentId = folderId;
+    		 }
+    		 else {
+    			 parentId = customFolder.getId();
     		 }
     	 }
     	 
@@ -150,7 +159,17 @@ public class FilesController {
         for (Path path : dirStream) {
             //System.out.println(path.getFileName());
             File file = path.toFile();
-            int folderId = 1;
+            String pathFile = path.getParent().toFile().getPath();
+            
+            int folderId = -1;
+            CustomFolder customFolder = customFolderDao.findCustomFolderByFolderpath(pathFile);
+            if (null == customFolder)
+   		 	{
+            	throw new Exception ("No Folder found for the file "+file.getPath());
+   		 	}
+            else {
+            	folderId = customFolder.getId();
+            }
             if (file.isDirectory()) {
                 //allDirs.add(file);
                 //File [] subFiles = file.listFiles();
@@ -160,19 +179,34 @@ public class FilesController {
                 scanFiles(file.getPath());
             } else {
                 String filename = file.getName();
-                String extension = ".txt";
+                int lastIndexExtension = filename.lastIndexOf(".");
+                
+                String extension = null;
+                if (lastIndexExtension != -1) {
+                	extension = filename.substring(lastIndexExtension+1);
+                }
+                
                 String filePath = file.getParentFile().getPath();
-                int size = (int) file.length();
+                //int size = (int) file.length();
+                long size = file.length();
+                if (size < 0)
+                {
+                	System.out.println("kk");
+                }
                 Date creationDate = new Date();
                 Date updateDate = null;
 
-                saveFile(filename, folderId, extension, filePath, size, creationDate, updateDate);
+                CustomFile customFile = customFileDao.findCustomFileByFolderIdAndName(folderId, filename);
+       		 	if (null == customFile)
+       		 	{
+       		 		saveFile(filename, folderId, extension, filePath, size, creationDate, updateDate);
+       		 	}
                 //allFiles.add(file);
             }
         }
     }
 
-    private void saveFile(String filename, int folderId, String extension, String path, int size, Date creationDate, Date updateDate) {
+    private void saveFile(String filename, int folderId, String extension, String path, long size, Date creationDate, Date updateDate) {
         try {
             //Insert into myfiles (filename, extension, folderId, size, absolutePath, creationDate, updateDate) values ('test2', 'txt', 1, '20', 'C:', null, null);
             customFileDao.saveFile(filename, extension, folderId, size, path, creationDate, updateDate);

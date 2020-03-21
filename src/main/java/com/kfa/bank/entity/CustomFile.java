@@ -25,7 +25,7 @@ public class CustomFile {
 	private int folderid;
 
 	@Column(name="size")
-	private int size;
+	private long size;
 
 	@Column(name="absolutepath")
 	private String absolutepath;
@@ -100,12 +100,12 @@ public class CustomFile {
 		this.absolutepath = absolutePath;
 	}
 
-	public int getSize() {
+	public long getSize() {
 		return size;
 	}
 
 	public void setSize(long size) {
-		this.size = (int) size;
+		this.size = size;
 	}
 
 	public Date getCreationdate() {

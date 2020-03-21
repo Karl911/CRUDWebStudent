@@ -1,21 +1,19 @@
 package com.kfa.bank.dao;
 
-import com.kfa.bank.entity.CustomFile;
-import com.kfa.bank.entity.CustomFolder;
-import com.kfa.bank.exception.CustomFileTransactionException;
-import com.kfa.bank.model.CustomFileInfo;
-import com.kfa.bank.model.CustomFolderInfo;
-import org.hibernate.loader.criteria.CriteriaQueryTranslator;
+import java.util.Date;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.Date;
-import java.util.List;
+import com.kfa.bank.entity.CustomFile;
+import com.kfa.bank.entity.CustomFolder;
+import com.kfa.bank.exception.CustomFileTransactionException;
 
 @Repository
 public class CustomFolderDao {
@@ -27,40 +25,42 @@ public class CustomFolderDao {
 
 	}
 
-
 	public CustomFolder findById(Long id)
 	{
 		return this.entityManager.find(CustomFolder.class, id);
 	}
 
-	public CustomFolderInfo findCustomFolderByFolderpath (String folderpath){
+	public CustomFolder findCustomFolderByFolderpath(String folderPath) {
 
-		String sql = "Select new "+ CustomFolder.class.getName() //
-				+ "(f.id, f.idparent, f.foldername, f.folderpath, f.size, f.creationdate, f.updatedate )" //
-				+" from "+CustomFolder.class.getName() + " As f"
-				+" where f.folderpath='"+folderpath+"'";
+		//String preparedFolderPath = addBackslash(folderPath);
 
-	  //	select * from myfolders where folderpath= 'E:\\Music\\mp3\\Bandes Originales'
+		String sql = "SELECT f FROM CustomFolder f" 
+				+ " where f.folderpath = : folderpath";
 
-		Query query = entityManager.createQuery(sql, CustomFolderInfo.class);
-
-		return (CustomFolderInfo) query.getSingleResult();
-
-		//return this.entityManager.find(CustomFolder.class, folderpath);
+		try {
+			TypedQuery<CustomFolder> query = entityManager.createQuery(sql, CustomFolder.class);
+			query.setParameter("folderpath", folderPath);
+			return (CustomFolder) query.getSingleResult();
+		}
+		catch (NoResultException e)
+		{
+			return null;
+		}
 	}
 
-	public List<CustomFileInfo> getFolders() {
-		String sql = "Select new " + CustomFolderInfo.class.getName() //
-				+ "(e.id,e.foldername,e.idparent, e.folderpath, e.size, e.creationdate, e.updatedate) " //
-				+ " from " + CustomFolder.class.getName() + " As e ";
-		Query query = entityManager.createQuery(sql, CustomFolderInfo.class);
-		return query.getResultList();
+	public CustomFolder getFolderByIdParent(int idParent) {
+		
+		String sql = "SELECT f FROM CustomFolder f" 
+				+ " where f.idparent='"+idParent+"'";
+		
+		TypedQuery<CustomFolder> query = entityManager.createQuery(sql, CustomFolder.class);
+		
+		return (CustomFolder) query.getSingleResult();
 	}
-
-
+	
 	@Transactional(propagation = Propagation.REQUIRES_NEW,
 			rollbackFor = CustomFileTransactionException.class)
-	public void saveFolder(String folderName, int idParent, String folderPath, int size, Date creationDate, Date updateDate) throws CustomFileTransactionException {
+	public int saveFolder(String folderName, int idParent, String folderPath, int size, Date creationDate, Date updateDate) throws CustomFileTransactionException {
 
 		CustomFolder folder = new CustomFolder(idParent, folderName, folderPath, size, creationDate, updateDate);
 		/*
@@ -72,43 +72,8 @@ public class CustomFolderDao {
 		folder.setUpdatedate(null);
 		 */
 		this.entityManager.persist(folder);
+		System.out.println("after save");
 		//this.entityManager.flush();
-
+		return folder.getId();
 	}
-
-
-	//@Test
-	/*
-	public void testSaveFolder() {
-
-		CustomFolder folder = new CustomFolder();
-		folder.setFoldername("toto");
-		folder.setIdparent(1);
-		folder.setFolderpath("E:\\music");
-		folder.setSize(10L);
-		folder.setCreationdate(new Date());
-		folder.setUpdatedate(new Date());
-				//setCustomer(customerService.findByName("John"));
-
-		this.entityManager.persist(folder);
-	}
-	/*
-	@Transactional(propagation = Propagation.REQUIRES_NEW,
-			rollbackFor = CustomFileTransactionException.class)
-	public void saveFolder(String folderName, int idParent, String folderpath, int size, Date creationDate, Date updateDate) throws CustomFileTransactionException {
-
-		CustomFolder folder = new CustomFolder();
-
-		folder.setFoldername(folderName);
-		folder.setIdparent(idParent);
-		folder.setFolderpath(folderpath);
-		folder.setSize(size);
-		folder.setCreationdate(null);
-		folder.setUpdatedate(null);
-		this.entityManager.persist(folder);
-		//this.entityManager.flush();
-
-	}
-	*/
-
 }

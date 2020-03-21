@@ -9,6 +9,11 @@ import java.util.Date;
 @Table (name="myfolders")
 public class CustomFolder implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2738248747016922169L;
+
 	@Id
 	@Column(name="id", nullable=false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,11 +70,14 @@ public class CustomFolder implements Serializable {
 	public Date getUpdatedate() {
 		return updatedate;
 	}
-	public void setUpdatedate(Date updateDate) {
+	public void setUpdatedate(Date updatedate) {
 		this.updatedate = updatedate;
 	}
 
-	public CustomFolder (int idparent, String foldername, String folderpath, int size, Date creationdate, Date updatedate) {
+	public CustomFolder() {
+
+	}
+	public CustomFolder (/*int id,*/ int idparent, String foldername, String folderpath, int size, Date creationdate, Date updatedate) {
 		//this.id = id;
 		this.idparent = idparent;
 		this.foldername = foldername;

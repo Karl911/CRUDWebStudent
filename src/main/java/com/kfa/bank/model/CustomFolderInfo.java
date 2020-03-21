@@ -22,7 +22,7 @@ public class CustomFolderInfo {
       this.id = id;
       this.idparent = idParent;
       this.foldername = folderName;
-      this.folderpath = folderPath;
+      this.setFolderpath(folderPath);
       this.size = size;
       this.creationdate = creationDate;
       this.updatedate = updateDate;
@@ -48,6 +48,14 @@ public class CustomFolderInfo {
    public void setIdparent(int idParent) {
       this.idparent = idParent;
    }
+   
+   public String getFolderpath() {
+	   return folderpath;
+   }
+
+   public void setFolderpath(String folderpath) {
+	   this.folderpath = folderpath;
+   }
 
    public int getSize() {
       return size;
@@ -69,4 +77,6 @@ public class CustomFolderInfo {
    public void setUpdatedate(Date updateDate) {
       this.updatedate = updateDate;
    }
+
+
 }
