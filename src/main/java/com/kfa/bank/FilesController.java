@@ -1,6 +1,7 @@
 package com.kfa.bank;
 
 import java.io.File;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,9 +44,11 @@ public class FilesController {
     @RequestMapping(value = "/showTree", method = RequestMethod.GET)
     public String showTree(Model model) throws Exception {
 
-    	String PATH_TO_SCAN = "D:\\FILMS";
+    	String PATH_TO_SCAN = "D:";
+    	 PATH_TO_SCAN = "E:";
+    	//PATH_TO_SCAN = "D:\\FILMS";
     	//PATH_TO_SCAN = "F:\\JEUX";
-    	PATH_TO_SCAN = "D:\\FILMS\\Séries";
+    	//PATH_TO_SCAN = "D:\\FILMS\\Séries";
     	//PATH_TO_SCAN = "D:\\FILMS\\Documentaires";
     	String folderPath = addBackslash(PATH_TO_SCAN);
     	//HashMap <Integer, List<String>> mapFolders = readFolders(htmlOutput, folderPath, -1);
@@ -75,33 +78,43 @@ public class FilesController {
     //private HashMap<Integer, List<String>> readFolders(String htmlOutput, String aPath, int lastFolderId) throws Exception {
     private void buildFolderTree(String aPath, boolean isRoot) throws Exception {
     	
-    	DirectoryStream<Path> dirStream = Files.newDirectoryStream(Paths.get(aPath));
-    	
-    	String rootFolderPath = Paths.get(aPath).toString();
-    	String rootFolderName = Paths.get(aPath).getFileName().toString();
-    	
-    	// main folder
-    	if (isRoot) {
-    		htmlOutput += "<div class=\"parent-check\">";
-    		htmlOutput += "<input id="+rootFolderPath +" type=\"checkbox\"><label>"+rootFolderName+"</label>";
+    	try {
+    		DirectoryStream<Path> dirStream = Files.newDirectoryStream(Paths.get(aPath));
+
+    		String rootFolderPath = Paths.get(aPath).toString();
+    		Path filename = Paths.get(aPath).getFileName();
+    		//String rootFolderName = Paths.get(aPath).getFileName().toString();
+    		String rootFolderName = aPath;
+    		if (null != filename) {
+    			rootFolderName = filename.toString();
+    		}
+
+    		// main folder
+    		if (isRoot) {
+    			htmlOutput += "<div class=\"parent-check\">";
+    			htmlOutput += "<input id="+rootFolderPath +" type=\"checkbox\"><label>"+rootFolderName+"</label>";
+    		}
+
+    		for (Path path : dirStream) {
+    			File file = path.toFile();
+    			if (file.isDirectory()) {
+
+    				htmlOutput += "<div class=\"child-check\">";
+    				htmlOutput += "<input id="+path.toString() +" type=\"checkbox\"><label>"+file.getName()+"</label>";
+
+    				buildFolderTree(file.getPath(), false);
+    				htmlOutput += "</div>";
+
+    			} 
+    			// Files
+    			else {
+
+    			}
+    		}
     	}
-    	
-        for (Path path : dirStream) {
-            File file = path.toFile();
-            if (file.isDirectory()) {
-            
-            	htmlOutput += "<div class=\"child-check\">";
-            	htmlOutput += "<input id="+path.toString() +" type=\"checkbox\"><label>"+file.getName()+"</label>";
-            	
-            	buildFolderTree(file.getPath(), false);
-           		htmlOutput += "</div>";
-            	
-            } 
-            // Files
-            else {
-            	
-            }
-        }
+    	catch (AccessDeniedException e) {
+    		//e.printStackTrace();
+    	}
     }
     private void scanDisk() throws Exception {
         //List<File> allFiles = new ArrayList<File>();
