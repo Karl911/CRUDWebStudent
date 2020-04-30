@@ -37,6 +37,26 @@ public class FilesController {
 
     @Autowired
     private CustomFolderDao customFolderDao;
+    
+    private String htmlOutput;
+    
+    @RequestMapping(value = "/showTree", method = RequestMethod.GET)
+    public String showTree(Model model) throws Exception {
+
+    	String PATH_TO_SCAN = "D:\\FILMS";
+    	//PATH_TO_SCAN = "F:\\JEUX";
+    	PATH_TO_SCAN = "D:\\FILMS\\Séries";
+    	//PATH_TO_SCAN = "D:\\FILMS\\Documentaires";
+    	String folderPath = addBackslash(PATH_TO_SCAN);
+    	//HashMap <Integer, List<String>> mapFolders = readFolders(htmlOutput, folderPath, -1);
+    	htmlOutput = "";
+    	buildFolderTree(folderPath, true);
+    	htmlOutput += "</div>";
+    	
+   		model.addAttribute("htmlOutput", htmlOutput);
+    	    
+        return "showTree";
+    }
 
     @RequestMapping(value = "/showFiles", method = RequestMethod.GET)
     public String scanDisk(Model model) throws Exception {
@@ -51,12 +71,43 @@ public class FilesController {
 
         return "filesPage";
     }
-
+    
+    //private HashMap<Integer, List<String>> readFolders(String htmlOutput, String aPath, int lastFolderId) throws Exception {
+    private void buildFolderTree(String aPath, boolean isRoot) throws Exception {
+    	
+    	DirectoryStream<Path> dirStream = Files.newDirectoryStream(Paths.get(aPath));
+    	
+    	String rootFolderPath = Paths.get(aPath).toString();
+    	String rootFolderName = Paths.get(aPath).getFileName().toString();
+    	
+    	// main folder
+    	if (isRoot) {
+    		htmlOutput += "<div class=\"parent-check\">";
+    		htmlOutput += "<input id="+rootFolderPath +" type=\"checkbox\"><label>"+rootFolderName+"</label>";
+    	}
+    	
+        for (Path path : dirStream) {
+            File file = path.toFile();
+            if (file.isDirectory()) {
+            
+            	htmlOutput += "<div class=\"child-check\">";
+            	htmlOutput += "<input id="+path.toString() +" type=\"checkbox\"><label>"+file.getName()+"</label>";
+            	
+            	buildFolderTree(file.getPath(), false);
+           		htmlOutput += "</div>";
+            	
+            } 
+            // Files
+            else {
+            	
+            }
+        }
+    }
     private void scanDisk() throws Exception {
         //List<File> allFiles = new ArrayList<File>();
         //List<File> allDirs = new ArrayList<File>();
 
-        //String PATH_TO_SCAN = "E:\Music\mp3\Bandes Originales\Bo - American Beauty";
+        String PATH_TO_SCAN = "D:\\FILMS";
 
         /*
         File dirToScan = new File(PATH_TO_SCAN);
@@ -72,7 +123,7 @@ public class FilesController {
         }
         */
 
-    	String folderPath = addBackslash("G:\\XXX");
+    	String folderPath = addBackslash(PATH_TO_SCAN);
     	//String folderPath = addBackslash("E:\\Music");
     	//String folderPath = addBackslash("E:\\Music\\mp3");
     	//String folderPath = addBackslash("E:\\Music\\mp3\\Bandes Originales");
